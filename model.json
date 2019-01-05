@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "defaultSchema": "company",
+  "schemas": [
+    {
+      "type": "custom",
+      "name": "company",
+      "factory": "io.github.tenghuanhe.calcite.tutorial.VolatileSchemaFactory",
+      "operand": {
+      }
+    }
+  ]
+}
