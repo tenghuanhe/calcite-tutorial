@@ -12,11 +12,11 @@ import java.util.Map;
 /**
  * Created by tenghuanhe on 17-4-12.
  */
-public class VolatileData {
+class VolatileData {
 
-  public static final Map<String, Database> DATABASE_MAP = new HashMap<String, Database>();
-  public static Map<String, SqlTypeName> sqlTypeNameMap = new HashMap<String, SqlTypeName>();
-  public static Map<String, Class> stringClassMap = new HashMap<String, Class>();
+  static final Map<String, Database> DATABASE_MAP = new HashMap<>();
+  private static Map<String, SqlTypeName> sqlTypeNameMap = new HashMap<>();
+  static Map<String, Class> stringClassMap = new HashMap<>();
 
   static {
     sqlTypeNameMap.put("char", SqlTypeName.CHAR);
@@ -64,21 +64,21 @@ public class VolatileData {
     DATABASE_MAP.put("company", company);
   }
 
-  public static class Database {
-    public List<Table> tables = new LinkedList<Table>();
+  static class Database {
+    List<Table> tables = new LinkedList<>();
   }
 
-  public static class Table {
-    public String tableName;
-    public List<Column> columns = new LinkedList<Column>();
-    public List<List<String>> rows = new LinkedList<List<String>>();
+  static class Table {
+    String tableName;
+    List<Column> columns = new LinkedList<>();
+    List<List<String>> rows = new LinkedList<>();
   }
 
-  public static class Column {
-    public String name;
-    public String type;
+  static class Column {
+    String name;
+    String type;
 
-    public Column(String name, String type) {
+    Column(String name, String type) {
       this.name = name;
       this.type = type;
     }

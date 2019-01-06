@@ -11,7 +11,6 @@ import java.util.Map;
  */
 public class VolatileSchemaFactory implements SchemaFactory {
   public Schema create(SchemaPlus parentSchema, String name, Map<String, Object> operand) {
-    System.out.println(name);
     return new VolatileSchema(name);
   }
 }

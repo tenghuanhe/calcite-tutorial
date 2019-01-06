@@ -20,7 +20,7 @@ public class VolatileTable extends AbstractTable implements ScannableTable {
   private VolatileData.Table sourceTable;
   private RelDataType dataType;
 
-  public VolatileTable(VolatileData.Table table) {
+  VolatileTable(VolatileData.Table table) {
     this.sourceTable = table;
   }
 
@@ -33,15 +33,15 @@ public class VolatileTable extends AbstractTable implements ScannableTable {
   }
 
   public Enumerable<Object[]> scan(DataContext root) {
-    final List<String> types = new ArrayList<String>(sourceTable.columns.size());
+    final List<String> types = new ArrayList<>(sourceTable.columns.size());
     for (VolatileData.Column column : sourceTable.columns) {
       types.add(column.type);
     }
     final int[] fields = toArray(this.dataType.getFieldCount());
 
-    return new AbstractEnumerable<Object[]>() {
+    return new AbstractEnumerable<>() {
       public Enumerator<Object[]> enumerator() {
-        return null;
+        return new VolatileEnumerator(fields, types, sourceTable.rows);
       }
     };
   }

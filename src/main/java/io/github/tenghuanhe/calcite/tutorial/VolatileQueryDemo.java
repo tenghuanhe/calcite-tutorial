@@ -24,18 +24,8 @@ public class VolatileQueryDemo {
     Properties info = new Properties();
     Connection connection = DriverManager.getConnection("jdbc:calcite:model=" + model, info);
     CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
-
-    System.out.println(calciteConnection.getRootSchema().getTableNames());
-    ResultSet resultSet = calciteConnection.getMetaData().getTables(null, null, null, null);
-    while (resultSet.next()) {
-      System.out.println(resultSet.getString(1));
-      System.out.println(resultSet.getString(2));
-      System.out.println(resultSet.getString(3));
-    }
-    resultSet.close();
-
     Statement statement = calciteConnection.createStatement();
-    resultSet = statement.executeQuery("SELECT * FROM \"departments\"");
+    ResultSet resultSet = statement.executeQuery("SELECT \"id\" FROM \"departments\"");
     while (resultSet.next()) {
       for (int i = 1; i < resultSet.getMetaData().getColumnCount() + 1; i++) {
         System.out.print(resultSet.getObject(i) + "\t");

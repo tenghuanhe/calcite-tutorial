@@ -10,18 +10,18 @@ import java.util.List;
  */
 public class VolatileEnumerator<E> implements Enumerator<E> {
 
-  private List<List<String>> rows = null;
+  private List<List<String>> rows;
   private List<String> types;
   private RowConverter<E> rowConverter;
   private int currentIndex = -1;
 
-  public VolatileEnumerator(int[] fields, List<String> types, List<List<String>> rows) {
+  VolatileEnumerator(int[] fields, List<String> types, List<List<String>> rows) {
     this.rows = rows;
     this.types = types;
     this.rowConverter = (RowConverter<E>) new ArrayRowConverter(fields);
   }
 
-  public static Object convertOptiqCellValue(String stringValue, String dataType) {
+  private static Object convertOptiqCellValue(String stringValue, String dataType) {
     if (stringValue == null) {
       return null;
     }
@@ -56,7 +56,7 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
   }
 
   public E current() {
-    List<String> row = rows.get(++currentIndex);
+    List<String> row = rows.get(currentIndex);
     return rowConverter.convert(row, this.types);
   }
 
@@ -79,7 +79,7 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
   static class ArrayRowConverter extends RowConverter<Object[]> {
     private int[] fields;
 
-    public ArrayRowConverter(int[] fields) {
+    ArrayRowConverter(int[] fields) {
       this.fields = fields;
     }
 
@@ -88,7 +88,6 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
       for (int i = 0; i < fields.length; i++) {
         objects[i] = convertOptiqCellValue(row.get(i), columnTypes.get(i));
       }
-
       return objects;
     }
   }

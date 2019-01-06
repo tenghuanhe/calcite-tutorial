@@ -12,7 +12,7 @@ import java.util.Map;
 public class VolatileSchema extends AbstractSchema {
   private String schemaName;
 
-  public VolatileSchema(String schemaName) {
+  VolatileSchema(String schemaName) {
     this.schemaName = schemaName;
   }
 
