@@ -15,10 +15,10 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
   private RowConverter<E> rowConverter;
   private int currentIndex = -1;
 
-  VolatileEnumerator(int[] fields, List<String> types, List<List<String>> rows) {
+  VolatileEnumerator(List<String> types, List<List<String>> rows) {
     this.rows = rows;
     this.types = types;
-    this.rowConverter = (RowConverter<E>) new ArrayRowConverter(fields);
+    this.rowConverter = (RowConverter<E>) new ArrayRowConverter();
   }
 
   private static Object convertOptiqCellValue(String stringValue, String dataType) {
@@ -77,15 +77,10 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
   }
 
   static class ArrayRowConverter extends RowConverter<Object[]> {
-    private int[] fields;
-
-    ArrayRowConverter(int[] fields) {
-      this.fields = fields;
-    }
 
     Object[] convert(List<String> row, List<String> columnTypes) {
-      Object[] objects = new Object[fields.length];
-      for (int i = 0; i < fields.length; i++) {
+      Object[] objects = new Object[columnTypes.size()];
+      for (int i = 0; i < columnTypes.size(); i++) {
         objects[i] = convertOptiqCellValue(row.get(i), columnTypes.get(i));
       }
       return objects;

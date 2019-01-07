@@ -24,38 +24,29 @@ public class VolatileTable extends AbstractTable implements ScannableTable {
     this.sourceTable = table;
   }
 
-  private static int[] toArray(int n) {
-    int[] array = new int[n];
-    for (int i = 0; i < n; i++) {
-      array[i] = i;
-    }
-    return array;
-  }
-
   public Enumerable<Object[]> scan(DataContext root) {
     final List<String> types = new ArrayList<>(sourceTable.columns.size());
     for (VolatileData.Column column : sourceTable.columns) {
       types.add(column.type);
     }
-    final int[] fields = toArray(this.dataType.getFieldCount());
-
     return new AbstractEnumerable<>() {
       public Enumerator<Object[]> enumerator() {
-        return new VolatileEnumerator(fields, types, sourceTable.rows);
+        return new VolatileEnumerator(types, sourceTable.rows);
       }
     };
   }
 
   public RelDataType getRowType(RelDataTypeFactory typeFactory) {
     if (dataType == null) {
-      RelDataTypeFactory.FieldInfoBuilder fieldInfoBuilder = typeFactory.builder();
+      List<RelDataType> typeList = new ArrayList<>();
+      List<String> fieldNameList = new ArrayList<>();
       for (VolatileData.Column column : this.sourceTable.columns) {
         RelDataType sqlType = typeFactory.createJavaType(VolatileData.stringClassMap.get(column.type));
         sqlType = SqlTypeUtil.addCharsetAndCollation(sqlType, typeFactory);
-        fieldInfoBuilder.add(column.name, sqlType);
+        typeList.add(sqlType);
+        fieldNameList.add(column.name);
       }
-
-      this.dataType = typeFactory.createStructType(fieldInfoBuilder);
+      this.dataType = typeFactory.createStructType(typeList, fieldNameList);
     }
     return this.dataType;
   }

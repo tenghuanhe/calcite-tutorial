@@ -2,10 +2,10 @@ package io.github.tenghuanhe.calcite.tutorial;
 
 import org.apache.calcite.sql.type.SqlTypeName;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +15,8 @@ import java.util.Map;
 class VolatileData {
 
   static final Map<String, Database> DATABASE_MAP = new HashMap<>();
-  private static Map<String, SqlTypeName> sqlTypeNameMap = new HashMap<>();
   static Map<String, Class> stringClassMap = new HashMap<>();
+  private static Map<String, SqlTypeName> sqlTypeNameMap = new HashMap<>();
 
   static {
     sqlTypeNameMap.put("char", SqlTypeName.CHAR);
@@ -44,12 +44,14 @@ class VolatileData {
     Table employees = new Table();
     employees.tableName = "employees";
     employees.columns.add(new Column("id", "integer"));
+    employees.columns.add(new Column("gender", "varchar"));
     employees.columns.add(new Column("name", "varchar"));
     employees.columns.add(new Column("deptNo", "integer"));
 
-    employees.rows.add(Arrays.asList("1", "alice", "1"));
-    employees.rows.add(Arrays.asList("2", "bob", "2"));
-    employees.rows.add(Arrays.asList("3", "tom", "1"));
+    employees.rows.add(Arrays.asList("1", "f", "alice", "1"));
+    employees.rows.add(Arrays.asList("2", "m", "bob", "2"));
+    employees.rows.add(Arrays.asList("3", "m", "tom", "1"));
+    employees.rows.add(Arrays.asList("4", "m", "shaw", "2"));
 
     Table departments = new Table();
     departments.tableName = "departments";
@@ -65,13 +67,13 @@ class VolatileData {
   }
 
   static class Database {
-    List<Table> tables = new LinkedList<>();
+    List<Table> tables = new ArrayList<>();
   }
 
   static class Table {
     String tableName;
-    List<Column> columns = new LinkedList<>();
-    List<List<String>> rows = new LinkedList<>();
+    List<Column> columns = new ArrayList<>();
+    List<List<String>> rows = new ArrayList<>();
   }
 
   static class Column {
