@@ -16,7 +16,7 @@ class VolatileData {
 
   static final Map<String, Database> DATABASE_MAP = new HashMap<>();
   static Map<String, Class> stringClassMap = new HashMap<>();
-  private static Map<String, SqlTypeName> sqlTypeNameMap = new HashMap<>();
+  static Map<String, SqlTypeName> sqlTypeNameMap = new HashMap<>();
 
   static {
     sqlTypeNameMap.put("char", SqlTypeName.CHAR);

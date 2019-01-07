@@ -11,26 +11,44 @@ import java.util.List;
 public class VolatileEnumerator<E> implements Enumerator<E> {
 
   private List<List<String>> rows;
-  private List<String> types;
   private RowConverter<E> rowConverter;
   private int currentIndex = -1;
 
-  VolatileEnumerator(List<String> types, List<List<String>> rows) {
-    this.rows = rows;
-    this.types = types;
-    this.rowConverter = (RowConverter<E>) new ArrayRowConverter();
+  VolatileEnumerator(List<List<String>> rows, List<String> types) {
+    this(rows, types, identityList(types.size()));
   }
 
-  private static Object convertOptiqCellValue(String stringValue, String dataType) {
+  VolatileEnumerator(List<List<String>> rows, List<String> types, int[] fields) {
+    //noinspection unchecked
+    this(rows, (RowConverter<E>) converter(types, fields));
+  }
+
+  VolatileEnumerator(List<List<String>> rows, RowConverter<E> rowConverter) {
+    this.rows = rows;
+    this.rowConverter = rowConverter;
+  }
+
+  private static RowConverter<?> converter(List<String> types, int[] fields) {
+    return new ArrayRowConverter(types, fields);
+  }
+
+  /** Returns an array of integers {0, ..., n - 1}. */
+  private static int[] identityList(int n) {
+    int[] integers = new int[n];
+    for (int i = 0; i < n; i++) {
+      integers[i] = i;
+    }
+    return integers;
+  }
+
+  private static Object convertSingleCellValue(String stringValue, String fieldType) {
     if (stringValue == null) {
       return null;
     }
-
-    if ((stringValue.length() == 0 || stringValue.equals("\\N")) && !dataType.equals("string")) {
+    if ((stringValue.length() == 0 || stringValue.equals("\\N")) && !fieldType.equals("string")) {
       return null;
     }
-
-    switch (dataType) {
+    switch (fieldType) {
     case "tinyint":
       return Byte.valueOf(stringValue);
     case "short":
@@ -57,7 +75,7 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
 
   public E current() {
     List<String> row = rows.get(currentIndex);
-    return rowConverter.convert(row, this.types);
+    return rowConverter.convert(row);
   }
 
   public boolean moveNext() {
@@ -73,15 +91,23 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
   }
 
   abstract static class RowConverter<E> {
-    abstract E convert(List<String> row, List<String> columnTypes);
+    abstract E convert(List<String> row);
   }
 
   static class ArrayRowConverter extends RowConverter<Object[]> {
+    private int[] fields;
+    private String[] fieldTypes;
 
-    Object[] convert(List<String> row, List<String> columnTypes) {
-      Object[] objects = new Object[columnTypes.size()];
-      for (int i = 0; i < columnTypes.size(); i++) {
-        objects[i] = convertOptiqCellValue(row.get(i), columnTypes.get(i));
+    ArrayRowConverter(List<String> fieldTypes, int[] fields) {
+      this.fieldTypes = fieldTypes.toArray(new String[0]);
+      this.fields = fields;
+    }
+
+    Object[] convert(List<String> row) {
+      Object[] objects = new Object[fields.length];
+      for (int i = 0; i < fields.length; i++) {
+        int fieldIdx = fields[i];
+        objects[i] = convertSingleCellValue(row.get(fieldIdx), fieldTypes[fieldIdx]);
       }
       return objects;
     }

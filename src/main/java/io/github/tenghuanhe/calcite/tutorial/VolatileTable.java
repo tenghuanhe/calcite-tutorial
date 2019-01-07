@@ -12,6 +12,7 @@ import org.apache.calcite.sql.type.SqlTypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by tenghuanhe on 17-4-12.
@@ -25,13 +26,11 @@ public class VolatileTable extends AbstractTable implements ScannableTable {
   }
 
   public Enumerable<Object[]> scan(DataContext root) {
-    final List<String> types = new ArrayList<>(sourceTable.columns.size());
-    for (VolatileData.Column column : sourceTable.columns) {
-      types.add(column.type);
-    }
+    final List<String> types = sourceTable.columns.stream().map(column -> column.type).collect(Collectors.toList());
     return new AbstractEnumerable<>() {
       public Enumerator<Object[]> enumerator() {
-        return new VolatileEnumerator(types, sourceTable.rows);
+        //noinspection unchecked
+        return new VolatileEnumerator(sourceTable.rows, types);
       }
     };
   }
