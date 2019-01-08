@@ -8,6 +8,11 @@ import org.apache.calcite.sql.type.SqlTypeUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by tenghuanhe on 19-1-9.
+ *
+ * push down filter to scan
+ */
 public abstract class AbstractVolatileTable extends AbstractTable {
   protected VolatileData.Table sourceTable;
 
