@@ -11,9 +11,11 @@ import java.util.Map;
  */
 public class VolatileSchema extends AbstractSchema {
   private String schemaName;
+  private String flavor;
 
   VolatileSchema(String schemaName) {
     this.schemaName = schemaName;
+    this.flavor = System.getProperty("calcite.volatile.flavor");
   }
 
   @Override
@@ -24,8 +26,21 @@ public class VolatileSchema extends AbstractSchema {
       return tables;
     }
     for (VolatileData.Table table : database.tables) {
-      tables.put(table.tableName, new VolatileTable(table));
+      tables.put(table.tableName, createTable(table));
     }
     return tables;
+  }
+
+  private Table createTable(VolatileData.Table table) {
+    switch (flavor) {
+    case "scannable":
+      return new VolatileScannableTable(table);
+    case "filterable":
+      return new VolatileFilterableTable(table);
+    case "translatable":
+      throw new AssertionError("Translatable flavor not supported yet");
+    default:
+      throw new AssertionError("Unknown flavor " + this.flavor);
+    }
   }
 }

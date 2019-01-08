@@ -13,6 +13,7 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
   private List<List<String>> rows;
   private RowConverter<E> rowConverter;
   private int currentIndex = -1;
+  private String[] filterValues;
 
   VolatileEnumerator(List<List<String>> rows, List<String> types) {
     this(rows, types, identityList(types.size()));
@@ -20,11 +21,17 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
 
   VolatileEnumerator(List<List<String>> rows, List<String> types, int[] fields) {
     //noinspection unchecked
-    this(rows, (RowConverter<E>) converter(types, fields));
+    this(rows, null, (RowConverter<E>) converter(types, fields));
   }
 
-  VolatileEnumerator(List<List<String>> rows, RowConverter<E> rowConverter) {
+  VolatileEnumerator(List<List<String>> rows, String[] filterValues, List<String> types, int[] fields) {
+    //noinspection unchecked
+    this(rows, filterValues, (RowConverter<E>) converter(types, fields));
+  }
+
+  VolatileEnumerator(List<List<String>> rows, String[] filterValues, RowConverter<E> rowConverter) {
     this.rows = rows;
+    this.filterValues = filterValues;
     this.rowConverter = rowConverter;
   }
 
@@ -33,7 +40,7 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
   }
 
   /** Returns an array of integers {0, ..., n - 1}. */
-  private static int[] identityList(int n) {
+  static int[] identityList(int n) {
     int[] integers = new int[n];
     for (int i = 0; i < n; i++) {
       integers[i] = i;
@@ -79,7 +86,26 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
   }
 
   public boolean moveNext() {
-    return ++currentIndex < rows.size();
+    if (filterValues == null) {
+      return ++currentIndex < rows.size();
+    }
+outer:
+    for (; ; ) {
+      currentIndex += 1;
+      if (currentIndex >= rows.size()) {
+        return false;
+      }
+      List<String> row = rows.get(currentIndex);
+      for (int i = 0; i < row.size(); i++) {
+        String filterValue = filterValues[i];
+        if (filterValue != null) {
+          if (!filterValue.equals(row.get(i))) {
+            continue outer;
+          }
+        }
+      }
+      return true;
+    }
   }
 
   public void reset() {
