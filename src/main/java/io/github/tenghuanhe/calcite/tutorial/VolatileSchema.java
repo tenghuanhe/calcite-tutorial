@@ -38,7 +38,7 @@ public class VolatileSchema extends AbstractSchema {
     case "filterable":
       return new VolatileFilterableTable(table);
     case "translatable":
-      throw new AssertionError("Translatable flavor not supported yet");
+      return new VolatileTranslatableTable(table);
     default:
       throw new AssertionError("Unknown flavor " + this.flavor);
     }
