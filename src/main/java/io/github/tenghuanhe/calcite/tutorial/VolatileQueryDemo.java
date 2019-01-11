@@ -35,4 +35,50 @@ public class VolatileQueryDemo {
     }
     resultSet.close();
   }
+
+  /* Generated class for sql `SELECT "deptNo", "gender" FROM "employees" WHERE "gender" = 'm'`
+
+  public org.apache.calcite.linq4j.Enumerable bind(final org.apache.calcite.DataContext root) {
+    final org.apache.calcite.rel.RelNode v1stashed = (org.apache.calcite.rel.RelNode) root.get("v1stashed");
+    final org.apache.calcite.interpreter.Interpreter interpreter = new org.apache.calcite.interpreter.Interpreter(
+        root,
+        v1stashed);
+    return new org.apache.calcite.linq4j.AbstractEnumerable() {
+      public org.apache.calcite.linq4j.Enumerator enumerator() {
+        return new org.apache.calcite.linq4j.Enumerator() {
+          public final org.apache.calcite.linq4j.Enumerator inputEnumerator = interpreter.enumerator();
+
+          public void reset() {
+            inputEnumerator.reset();
+          }
+
+          public boolean moveNext() {
+            while (inputEnumerator.moveNext()) {
+              final Object[] current = (Object[]) inputEnumerator.current();
+              final String inp1_ = current[1] == null ? (String) null : current[1].toString();
+              if (inp1_ != null && org.apache.calcite.runtime.SqlFunctions.eq(inp1_, "m")) {
+                return true;
+              }
+            }
+            return false;
+          }
+
+          public void close() {
+            inputEnumerator.close();
+          }
+
+          public Object current() {
+            final Object[] current = (Object[]) inputEnumerator.current();
+            return new Object[]{
+                current[3],
+                current[1]
+            };
+          }
+
+        };
+      }
+
+    };
+  }
+   */
 }
