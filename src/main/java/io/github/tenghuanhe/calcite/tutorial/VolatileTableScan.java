@@ -73,6 +73,8 @@ public class VolatileTableScan extends TableScan implements EnumerableRel {
         );
     return implementor.result(
         physType,
+        // Expression meta-program for calling the VolatileTranslatableTable#project
+        // method form the generated code
         Blocks.toBlock(
             Expressions.call(table.getExpression(VolatileTranslatableTable.class),
                 "project", implementor.getRootExpression(),
