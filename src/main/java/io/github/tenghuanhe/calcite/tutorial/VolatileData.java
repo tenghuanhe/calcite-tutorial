@@ -42,7 +42,7 @@ class VolatileData {
 
     Database company = new Database();
     Table employees = new Table();
-    employees.tableName = "employees";
+    employees.tableName = "employee";
     employees.columns.add(new Column("id", "integer"));
     employees.columns.add(new Column("gender", "varchar"));
     employees.columns.add(new Column("name", "varchar"));
@@ -54,7 +54,7 @@ class VolatileData {
     employees.rows.add(Arrays.asList("4", "m", "shaw", "2"));
 
     Table departments = new Table();
-    departments.tableName = "departments";
+    departments.tableName = "department";
     departments.columns.add(new Column("id", "integer"));
     departments.columns.add(new Column("name", "varchar"));
     departments.rows.add(Arrays.asList("1", "sales"));
