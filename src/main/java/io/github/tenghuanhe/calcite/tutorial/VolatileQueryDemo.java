@@ -26,7 +26,9 @@ public class VolatileQueryDemo {
     CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
     Statement statement = calciteConnection.createStatement();
     ResultSet resultSet = statement.executeQuery(
-        "SELECT \"deptNo\", \"gender\" FROM \"employee\" WHERE \"gender\" = 'm'");
+        "SELECT \"employee\".\"deptNo\", \"employee\".\"gender\", \"department\".\"name\""
+            + " FROM \"employee\", \"department\""
+            + " WHERE \"employee\".\"gender\" = 'm' and \"department\".\"id\" = \"employee\".\"deptNo\"");
     while (resultSet.next()) {
       for (int i = 1; i < resultSet.getMetaData().getColumnCount() + 1; i++) {
         System.out.print(resultSet.getObject(i) + "\t");

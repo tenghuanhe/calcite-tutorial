@@ -76,7 +76,6 @@ public class VolatileEnumerator<E> implements Enumerator<E> {
       return Boolean.valueOf(stringValue);
     default:
       return stringValue;
-
     }
   }
 
